@@ -12,15 +12,4 @@ class ReservaViewModel : ViewModel() {
     // y que la interfaz (Compose) se actualice automáticamente cuando cambian.
 
 
-    fun irANuevaReserva() {
-        _pantallaActual.value = "nuevaReserva"
-    }
-
-    fun volverDashboard() {
-        _pantallaActual.value = "dashboard"
-    }
-
-    fun irAListadoReservas() {
-        _pantallaActual.value = "listadoReservas"
-    }
 }

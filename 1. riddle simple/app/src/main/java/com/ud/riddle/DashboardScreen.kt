@@ -5,26 +5,24 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
-data class Reserva(
-    val nombre: String,
-    val hora: String,
-    val cancha: String
-)
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 @Composable
-fun DashboardScreen(viewModel: ReservaViewModel) {
+fun DashboardScreen(viewModel: DashboardViewModel) {
+    val reservas by viewModel.reservas.collectAsStateWithLifecycle()
 
-    val reservas = listOf(
-        Reserva("Carlos", "10:00 AM", "Cancha 2"),
-        Reserva("Ana", "11:30 AM", "Cancha 3"),
-        Reserva("Luis", "1:00 PM", "Cancha 1")
-    )
+
+    LazyColumn {
+        items(reservas) { reserva ->
+            Text(reserva.cliente)
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -71,14 +69,14 @@ fun DashboardScreen(viewModel: ReservaViewModel) {
         }
 
         Button(
-            onClick = {viewModel.irANuevaReserva()},
+            onClick = {viewModel.irA(Screen.ListReservations)},
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Nueva Reserva")
         }
 
         Button(
-            onClick = {viewModel.irAListadoReservas()},
+            onClick = {viewModel.irADashboard()},
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Listado Reservas")
@@ -131,7 +129,7 @@ fun ReservaItem(reserva: Reserva) {
         ) {
 
             Text(
-                text = "${reserva.nombre} - ${reserva.hora} - ${reserva.cancha}"
+                text = "${reserva.cliente} - ${reserva.hora} - ${reserva.cancha}"
             )
         }
     }

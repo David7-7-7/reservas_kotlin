@@ -1,6 +1,7 @@
 package com.ud.riddle
 
-import androidx.compose.foundation.horizontalScroll
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -8,8 +9,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun NuevaReservaScreen(viewModel: ReservaViewModel) {
+fun NuevaReservaScreen(viewModel: ModeloCreaReserva) {
 
     Column(
         modifier = Modifier
@@ -28,7 +30,7 @@ fun NuevaReservaScreen(viewModel: ReservaViewModel) {
         Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
-            value = "",
+            value = viewModel.nombre,
             onValueChange = {},
             label = { Text("Nombre del Cliente") },
             modifier = Modifier.fillMaxWidth()
@@ -37,7 +39,7 @@ fun NuevaReservaScreen(viewModel: ReservaViewModel) {
         Spacer(modifier = Modifier.height(10.dp))
 
         OutlinedTextField(
-            value = "",
+            value = viewModel.telefono,
             onValueChange = {},
             label = { Text("Teléfono") },
             modifier = Modifier.fillMaxWidth()
@@ -46,7 +48,7 @@ fun NuevaReservaScreen(viewModel: ReservaViewModel) {
         Spacer(modifier = Modifier.height(10.dp))
 
         OutlinedTextField(
-            value = "12/05/2026",
+            value = viewModel.fecha,
             onValueChange = {},
             label = { Text("Fecha") },
             modifier = Modifier.fillMaxWidth()
@@ -55,7 +57,7 @@ fun NuevaReservaScreen(viewModel: ReservaViewModel) {
         Spacer(modifier = Modifier.height(10.dp))
 
         OutlinedTextField(
-            value = "10:00 AM",
+            value = viewModel.hora,
             onValueChange = {},
             label = { Text("Hora") },
             modifier = Modifier.fillMaxWidth()
@@ -64,7 +66,7 @@ fun NuevaReservaScreen(viewModel: ReservaViewModel) {
         Spacer(modifier = Modifier.height(10.dp))
 
         OutlinedTextField(
-            value = "1",
+            value = viewModel.cancha,
             onValueChange = {},
             label = { Text("Número de Cancha") },
             modifier = Modifier.fillMaxWidth()
@@ -73,7 +75,7 @@ fun NuevaReservaScreen(viewModel: ReservaViewModel) {
         Spacer(modifier = Modifier.height(10.dp))
 
         OutlinedTextField(
-            value = "4",
+            value = viewModel.cantJugadores,
             onValueChange = {},
             label = { Text("Cantidad de Jugadores") },
             modifier = Modifier.fillMaxWidth()
@@ -82,7 +84,7 @@ fun NuevaReservaScreen(viewModel: ReservaViewModel) {
         Spacer(modifier = Modifier.height(10.dp))
 
         OutlinedTextField(
-            value = "Activa",
+            value = viewModel.estado,
             onValueChange = {},
             label = { Text("Estado") },
             modifier = Modifier.fillMaxWidth()
@@ -95,7 +97,7 @@ fun NuevaReservaScreen(viewModel: ReservaViewModel) {
             modifier = Modifier.fillMaxWidth()
         ) {
 
-            Button(onClick = {viewModel.volverDashboard()}) {
+            Button(onClick = {viewModel.creaReserva()}) {
                 Text("Guardar")
             }
 
