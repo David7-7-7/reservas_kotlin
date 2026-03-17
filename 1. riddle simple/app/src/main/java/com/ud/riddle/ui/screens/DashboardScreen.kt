@@ -1,4 +1,4 @@
-package com.ud.riddle
+package com.ud.riddle.ui.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -12,6 +12,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.ud.riddle.viewmodel.DashboardViewModel
+import com.ud.riddle.data.local.Reserva
+import com.ud.riddle.Screen
 
 @Composable
 fun DashboardScreen(viewModel: DashboardViewModel) {
@@ -59,14 +62,6 @@ fun DashboardScreen(viewModel: DashboardViewModel) {
         )
 
         Spacer(modifier = Modifier.height(8.dp))
-
-        LazyColumn(
-            modifier = Modifier.weight(1f)
-        ) {
-            items(reservas) { reserva ->
-                ReservaItem(reserva)
-            }
-        }
 
         Button(
             onClick = {viewModel.irA(Screen.ListReservations)},

@@ -1,4 +1,4 @@
-package com.ud.riddle
+package com.ud.riddle.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -6,30 +6,23 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.ud.riddle.viewmodel.ModeloCreaReserva
+import com.ud.riddle.Screen
+import com.ud.riddle.data.local.Reserva
+import com.ud.riddle.viewmodel.ReservaViewModel
 
-data class ReservaListado(
-    val cliente: String,
-    val fecha: String,
-    val hora: String,
-    val cancha: String,
-    val estado: String
-)
 
 @Composable
 fun ListadoReservasScreen(viewModel: ReservaViewModel) {
-
-    val reservas = listOf(
-        ReservaListado("Carlos","12/05/2026","10:00 AM","2","Activa"),
-        ReservaListado("Ana","12/05/2026","11:30 AM","3","Activa"),
-        ReservaListado("Luis","12/05/2026","1:00 PM","1","Finalizada")
-    )
+    val reservas by viewModel.reservas.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier
@@ -48,13 +41,9 @@ fun ListadoReservasScreen(viewModel: ReservaViewModel) {
         Spacer(modifier = Modifier.height(10.dp))
 
         OutlinedTextField(
-            value = "",
-            onValueChange = {},
-            placeholder = { Text("Buscar reserva...") },
-            trailingIcon = {
-                Icon(Icons.Default.Search, contentDescription = "Buscar")
-            },
-            modifier = Modifier.fillMaxWidth()
+            value = viewModel.query,
+            onValueChange = { viewModel.query = it },
+            placeholder = { Text("Buscar reserva...") }
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -76,27 +65,24 @@ fun ListadoReservasScreen(viewModel: ReservaViewModel) {
 
         LazyColumn {
             items(reservas) { reserva ->
-                ReservaFila(reserva)
+                ReservaFila(reserva, viewModel)
             }
         }
         Button(
             onClick = {viewModel.volverDashboard()},
-            colors = ButtonDefaults.buttonColors(containerColor = androidx.compose.ui.graphics.Color.Gray)
+            colors = ButtonDefaults.buttonColors(containerColor = Color.Gray)
         ) {
-            Text("Volver")
+            Text("Volver a:")
         }
     }
 }
 
 @Composable
-fun ReservaFila(reserva: ReservaListado) {
+fun ReservaFila(reserva: Reserva, viewModel: ReservaViewModel) {
 
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
 
         Text(reserva.cliente)
@@ -104,19 +90,10 @@ fun ReservaFila(reserva: ReservaListado) {
         Text(reserva.hora)
         Text(reserva.cancha)
 
-        val colorEstado =
-            if (reserva.estado == "Activa") Color(0xFF4CAF50) else Color.Red
+        Text(reserva.estado)
 
-        Text(
-            reserva.estado,
-            color = Color.White,
-            modifier = Modifier
-                .background(colorEstado)
-                .padding(4.dp)
-        )
-
-        IconButton(onClick = {}) {
-            Icon(Icons.Default.Edit, contentDescription = "Editar")
+        IconButton(onClick = { viewModel.eliminar(reserva) }) {
+            Icon(Icons.Default.Edit, contentDescription = "Eliminar")
         }
     }
 }

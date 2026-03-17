@@ -1,7 +1,10 @@
-package com.ud.riddle
+package com.ud.riddle.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ud.riddle.Repositorio
+import com.ud.riddle.data.local.Reserva
+import com.ud.riddle.Screen
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -14,7 +17,7 @@ class DashboardViewModel (private val repository: Repositorio) : ViewModel() {
     val reservas: StateFlow<List<Reserva>> = repository.getReservas()
         .stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
+            started = SharingStarted.Companion.WhileSubscribed(5000),
             initialValue = emptyList()
         )
 
