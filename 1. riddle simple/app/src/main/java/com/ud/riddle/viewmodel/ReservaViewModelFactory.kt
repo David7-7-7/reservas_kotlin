@@ -2,12 +2,12 @@ package com.ud.riddle.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.ud.riddle.Repositorio
+import com.ud.riddle.RepositorioCRUD
 
 class ReservaViewModelFactory(
-    private val repositorio: Repositorio
+    private val repositorioCRUD: RepositorioCRUD
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return ReservaViewModel(repositorio) as T
+        return ReservaViewModel(repositorioCRUD) as T
     }
 }

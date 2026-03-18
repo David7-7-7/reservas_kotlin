@@ -2,16 +2,16 @@ package com.ud.riddle.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.ud.riddle.Repositorio
+import com.ud.riddle.RepositorioCRUD
 
 class ModeloCreaReservaFactory(
-    private val repositorio: Repositorio
+    private val repositorioCRUD: RepositorioCRUD
 ) : ViewModelProvider.Factory {
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(ModeloCreaReserva::class.java)) {
-            return ModeloCreaReserva(repositorio) as T
+            return ModeloCreaReserva(repositorioCRUD) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

@@ -35,12 +35,12 @@ class MainActivity : ComponentActivity() {
         ).build()
 
         // Crear repositorio
-        val repositorio = Repositorio(db.reservaDao())
+        val repositorioCRUD = RepositorioCRUD(db.reservaDao())
 
         // Crear factories
-        val dashboardFactory = DashboardViewModelFactory(repositorio)
-        val creaReservaFactory = ModeloCreaReservaFactory(repositorio)
-        val listaReservaFactory = ReservaViewModelFactory(repositorio)
+        val dashboardFactory = DashboardViewModelFactory(repositorioCRUD)
+        val creaReservaFactory = ModeloCreaReservaFactory(repositorioCRUD)
+        val listaReservaFactory = ReservaViewModelFactory(repositorioCRUD)
 
         // Crear ViewModels correctamente
         val newResViewModel: ModeloCreaReserva by viewModels { creaReservaFactory }
@@ -53,8 +53,8 @@ class MainActivity : ComponentActivity() {
             MaterialTheme {
                 when (pantalla) {
                     Screen.Main -> DashboardScreen(dashViewModel)
-                    Screen.NewReservation -> NuevaReservaScreen(newResViewModel)
-                    Screen.ListReservations -> ListadoReservasScreen(listaViewModel)
+                    Screen.NewReservation -> NuevaReservaScreen(newResViewModel, dashViewModel)
+                    Screen.ListReservations -> ListadoReservasScreen(listaViewModel, dashViewModel)
                     else -> DashboardScreen(dashViewModel)
                 }
             }

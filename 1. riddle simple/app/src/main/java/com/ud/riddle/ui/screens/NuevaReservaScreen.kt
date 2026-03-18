@@ -1,28 +1,37 @@
 package com.ud.riddle.ui.screens
 
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.ud.riddle.EstadoCreacionReserva
+import com.ud.riddle.estados.EstadoCreacionReserva
 import com.ud.riddle.viewmodel.ModeloCreaReserva
+import com.ud.riddle.viewmodel.DashboardViewModel
+import androidx.compose.material3.OutlinedTextField
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun NuevaReservaScreen(viewModel: ModeloCreaReserva) {
+fun NuevaReservaScreen(
+    viewModel: ModeloCreaReserva,
+    dashViewModel: DashboardViewModel
+) {
+
     val uiState by viewModel.uiState.collectAsState()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
-            , horizontalAlignment =Alignment.CenterHorizontally
+        , horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
         Spacer(modifier = Modifier.height(33.dp))
@@ -50,18 +59,16 @@ fun NuevaReservaScreen(viewModel: ModeloCreaReserva) {
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        OutlinedTextField(
-            value = viewModel.fecha,
+        OutlinedTextField( value = viewModel.fecha,
             onValueChange = {viewModel.fecha = it},
-            label = { Text("Fecha") }
+            label = { Text("Número de Cancha") }
         )
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        OutlinedTextField(
-            value = viewModel.hora,
+        OutlinedTextField( value = viewModel.hora,
             onValueChange = {viewModel.hora = it},
-            label = { Text("Hora") }
+            label = { Text("Número de Cancha") }
         )
 
         Spacer(modifier = Modifier.height(10.dp))
@@ -107,15 +114,26 @@ fun NuevaReservaScreen(viewModel: ModeloCreaReserva) {
             modifier = Modifier.fillMaxWidth()
         ) {
 
-            Button(onClick = {viewModel.creaReserva()}) {
+            Button(onClick = {
+                viewModel.creaReserva()
+                viewModel.limpiarCampos()
+            }) {
                 Text("Guardar")
             }
 
             Button(
-                onClick = {viewModel.volverDashboard()},
+                onClick = { dashViewModel.irADashboard() },
                 colors = ButtonDefaults.buttonColors(containerColor = Color.Gray)
             ) {
                 Text("Cancelar")
+            }
+
+            Button(
+                onClick = { dashViewModel.irADashboard() },
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Gray),
+                modifier = Modifier.padding(start = 16.dp)
+            ) {
+                Text("Volver")
             }
         }
     }

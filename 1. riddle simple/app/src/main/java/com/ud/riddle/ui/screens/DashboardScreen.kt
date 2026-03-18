@@ -3,6 +3,7 @@ package com.ud.riddle.ui.screens
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.magnifier
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -15,26 +16,21 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ud.riddle.viewmodel.DashboardViewModel
 import com.ud.riddle.data.local.Reserva
 import com.ud.riddle.Screen
+import com.ud.riddle.viewmodel.ReservaViewModel
 
 @Composable
 fun DashboardScreen(viewModel: DashboardViewModel) {
+
     val reservas by viewModel.reservas.collectAsStateWithLifecycle()
-
-
-    LazyColumn {
-        items(reservas) { reserva ->
-            Text(reserva.cliente)
-        }
-    }
+    val canchasOcupadas by viewModel.canchasOcupadas.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
-            , horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        Spacer(modifier = Modifier.height(30.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
         Text(
             text = "Golf Club",
@@ -44,14 +40,40 @@ fun DashboardScreen(viewModel: DashboardViewModel) {
 
         Spacer(modifier = Modifier.height(20.dp))
 
+        //  PRIMERA FILA
         Row(modifier = Modifier.fillMaxWidth()) {
-            DashboardCard("Reservas Hoy", "12", Color(0xFF4CAF50))
-            DashboardCard("Canchas Ocupadas", "5", Color(0xFF8BC34A))
+
+            DashboardCard(
+                "Reservas Hoy",
+                "${reservas.size}",
+                Color(0xFF4CAF50),
+                Modifier.weight(1f)
+            )
+
+            DashboardCard(
+                "Canchas Ocupadas",
+                "$canchasOcupadas",
+                Color(0xFF8BC34A),
+                Modifier.weight(1f)
+            )
         }
 
+        // SEGUNDA FILA
         Row(modifier = Modifier.fillMaxWidth()) {
-            DashboardCard("Reservas Activas", "8", Color(0xFF66BB6A))
-            DashboardCard("Finalizadas", "4", Color(0xFF9E9E9E))
+
+            DashboardCard(
+                "Reservas Activas",
+                "${reservas.count { it.estado == "Active" }}",
+                Color(0xFF66BB6A),
+                Modifier.weight(1f)
+            )
+
+            DashboardCard(
+                "Finalizadas",
+                "${reservas.count { it.estado == "Finalizada" }}",
+                Color(0xFF9E9E9E),
+                Modifier.weight(1f)
+            )
         }
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -63,27 +85,50 @@ fun DashboardScreen(viewModel: DashboardViewModel) {
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        Button(
-            onClick = {viewModel.irA(Screen.ListReservations)},
+        //  LISTA BONITA COMO EN LA IMAGEN
+        Card(
             modifier = Modifier.fillMaxWidth()
+        ) {
+            Column(modifier = Modifier.padding(8.dp)) {
+
+                reservas.take(3).forEach { reserva ->
+                    ReservaItem(reserva)
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        //  BOTONES
+        Button(
+            onClick = { viewModel.irA(Screen.NewReservation) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp)
         ) {
             Text("Nueva Reserva")
         }
 
-        Button(
-            onClick = {viewModel.irADashboard()},
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Listado Reservas")
-        }
+        Spacer(modifier = Modifier.height(20.dp))
+
+        Button( onClick = {viewModel.irA(Screen.ListReservations)},
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp)
+        ) { Text("Listado Reservas") }
     }
 }
 
 @Composable
-fun DashboardCard(titulo: String, valor: String, color: Color) {
+fun DashboardCard(
+    titulo: String,
+    valor: String,
+    color: Color,
+    modifier: Modifier = Modifier
+) {
 
     Card(
-        modifier = Modifier
+        modifier = modifier
             .padding(8.dp)
             .height(100.dp),
         colors = CardDefaults.cardColors(containerColor = color)
@@ -112,20 +157,17 @@ fun DashboardCard(titulo: String, valor: String, color: Color) {
 @Composable
 fun ReservaItem(reserva: Reserva) {
 
-    Card(
+    Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 4.dp)
+            .padding(vertical = 6.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
 
-        Row(
-            modifier = Modifier
-                .padding(12.dp)
-        ) {
+        Text(text = reserva.cliente)
 
-            Text(
-                text = "${reserva.cliente} - ${reserva.hora} - ${reserva.cancha}"
-            )
-        }
+        Text(text = "${reserva.hora}")
+
+        Text(text = "Cancha ${reserva.cancha}")
     }
 }

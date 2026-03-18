@@ -1,4 +1,4 @@
-package com.ud.riddle
+package com.ud.riddle.estados
 
 sealed class EstadoCreacionReserva {
     object Idle : EstadoCreacionReserva()

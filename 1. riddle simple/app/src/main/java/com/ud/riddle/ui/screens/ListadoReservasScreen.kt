@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -14,86 +16,111 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.ud.riddle.viewmodel.ModeloCreaReserva
-import com.ud.riddle.Screen
 import com.ud.riddle.data.local.Reserva
+import com.ud.riddle.viewmodel.DashboardViewModel
 import com.ud.riddle.viewmodel.ReservaViewModel
 
 
 @Composable
-fun ListadoReservasScreen(viewModel: ReservaViewModel) {
+fun ListadoReservasScreen(viewModel: ReservaViewModel, dashViewModel: DashboardViewModel) {
     val reservas by viewModel.reservas.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
-            , horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
-        Spacer(modifier = Modifier.height(30.dp ))
 
         Text(
             text = "Listado de Reservas",
-            style = MaterialTheme.typography.titleLarge
-        )
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        OutlinedTextField(
-            value = viewModel.query,
-            onValueChange = { viewModel.query = it },
-            placeholder = { Text("Buscar reserva...") }
+            style = MaterialTheme.typography.headlineMedium
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color(0xFF4CAF50))
-                .padding(8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text("Cliente", color = Color.White)
-            Text("Fecha", color = Color.White)
-            Text("Hora", color = Color.White)
-            Text("Cancha", color = Color.White)
-            Text("Estado", color = Color.White)
-            Text("Acciones", color = Color.White)
-        }
+        OutlinedTextField(
+            value = viewModel.query,
+            onValueChange = { viewModel.query = it },
+            placeholder = { Text("Buscar reserva...") },
+            modifier = Modifier.fillMaxWidth(),
+            shape = MaterialTheme.shapes.medium
+        )
 
-        LazyColumn {
+        Spacer(modifier = Modifier.height(16.dp))
+
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
             items(reservas) { reserva ->
-                ReservaFila(reserva, viewModel)
+                ReservaCard(reserva, viewModel)
             }
         }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
         Button(
-            onClick = {viewModel.volverDashboard()},
-            colors = ButtonDefaults.buttonColors(containerColor = Color.Gray)
+            onClick = { dashViewModel.irADashboard() },
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Volver a:")
+            Text("Volver")
         }
     }
+
 }
 
-@Composable
-fun ReservaFila(reserva: Reserva, viewModel: ReservaViewModel) {
 
-    Row(
+@Composable
+fun ReservaCard(reserva: Reserva, viewModel: ReservaViewModel) {
+
+    Card(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween
+        elevation = CardDefaults.cardElevation(6.dp),
+        shape = MaterialTheme.shapes.medium
     ) {
 
-        Text(reserva.cliente)
-        Text(reserva.fecha)
-        Text(reserva.hora)
-        Text(reserva.cancha)
+        Column(modifier = Modifier.padding(16.dp)) {
 
-        Text(reserva.estado)
+            Text(
+                text = reserva.cliente,
+                style = MaterialTheme.typography.titleMedium
+            )
 
-        IconButton(onClick = { viewModel.eliminar(reserva) }) {
-            Icon(Icons.Default.Edit, contentDescription = "Eliminar")
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text("📅 ${reserva.fecha}")
+                Text("⏰ ${reserva.hora}")
+            }
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text("Cancha: ${reserva.cancha}")
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text(
+                text = reserva.estado,
+                color = when (reserva.estado) {
+                    "Activa" -> Color(0xFF4CAF50)
+                    "Cancelada" -> Color.Red
+                    else -> Color.Gray
+                }
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Row(
+                horizontalArrangement = Arrangement.End,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+
+                IconButton(onClick = { viewModel.eliminar(reserva) }) {
+                    Icon(Icons.Default.Delete, contentDescription = "Eliminar")
+                }
+            }
         }
     }
 }

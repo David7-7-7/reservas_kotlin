@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -32,5 +33,8 @@ interface DAOReserva {
     @Query("SELECT * FROM reservas WHERE cliente LIKE '%' || :nombre || '%'")
     fun buscarPorCliente(nombre: String): Flow<List<Reserva>>
 
+    //Editar reserva
+    @Update
+    suspend fun updateReserva(reserva: Reserva)
 
 }

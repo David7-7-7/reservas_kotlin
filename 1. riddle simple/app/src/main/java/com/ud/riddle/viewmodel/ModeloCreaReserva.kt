@@ -7,8 +7,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ud.riddle.EstadoCreacionReserva
-import com.ud.riddle.Repositorio
+import com.ud.riddle.estados.EstadoCreacionReserva
+import com.ud.riddle.RepositorioCRUD
 import com.ud.riddle.data.local.Reserva
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,10 +18,8 @@ import java.time.LocalDate
 import java.time.LocalTime
 
 @RequiresApi(Build.VERSION_CODES.O)
-class ModeloCreaReserva (private val repositorio: Repositorio) : ViewModel() {
+class ModeloCreaReserva (private val repositorioCRUD: RepositorioCRUD) : ViewModel() {
 
-    private val _pantallaActual = MutableStateFlow("dashboard")
-    val pantallaActual: StateFlow<String> = _pantallaActual
     private val _uiState = MutableStateFlow<EstadoCreacionReserva>(EstadoCreacionReserva.Idle)
     val uiState: StateFlow<EstadoCreacionReserva> = _uiState.asStateFlow()
     var nombre by mutableStateOf("")
@@ -35,14 +33,15 @@ class ModeloCreaReserva (private val repositorio: Repositorio) : ViewModel() {
     fun creaReserva() {
         viewModelScope.launch {
 
-            val existente = repositorio.existeReserva(cancha, fecha, hora)
+            val existente = repositorioCRUD.existeReserva(cancha, fecha, hora)
+
 
             if (existente != null) {
                 _uiState.value = EstadoCreacionReserva.Error("Ya existe una reserva para esa cancha, fecha y hora")
                 return@launch
             }
 
-            repositorio.saveReserva(
+            repositorioCRUD.saveReserva(
                 Reserva(
                     cliente = nombre,
                     telefono = telefono,
@@ -55,12 +54,20 @@ class ModeloCreaReserva (private val repositorio: Repositorio) : ViewModel() {
             )
 
             _uiState.value = EstadoCreacionReserva.Success
-            volverDashboard()
         }
     }
 
-    fun volverDashboard() {
-        _pantallaActual.value = "dashboard"
+    fun limpiarCampos() {
+        nombre = ""
+        telefono = ""
+        fecha = ""
+        hora = ""
+        cancha = ""
+        cantJugadores = ""
+        estado = ""
     }
+
+
+
 
 }
