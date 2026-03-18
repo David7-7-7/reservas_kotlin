@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.stateIn
 class DashboardViewModel (private val repository: RepositorioCRUD) : ViewModel() {
     private val _pantallaActual = MutableStateFlow<Screen>(Screen.Main)
     val pantallaActual: StateFlow<Screen> = _pantallaActual.asStateFlow()
-    val reservas: StateFlow<List<Reserva>> = repository.getReservas() //State flow mantiene el ultimo valor
+    val reservas: StateFlow<List<Reserva>> = repository.getReservas()
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.Companion.WhileSubscribed(5000),
@@ -23,9 +23,9 @@ class DashboardViewModel (private val repository: RepositorioCRUD) : ViewModel()
         )
     val canchasOcupadas = reservas.map { lista ->
         lista
-            .filter { it.estado == "Active" } // solo activas
-            .map { it.cancha }               // obtenemos canchas
-            .distinct()                     // evitamos duplicados
+            .filter { it.estado == "Activa" }
+            .map { it.cancha }
+            .distinct()
             .count()
     }.stateIn(
         viewModelScope,
@@ -40,4 +40,5 @@ class DashboardViewModel (private val repository: RepositorioCRUD) : ViewModel()
     fun irADashboard() {
         _pantallaActual.value = Screen.Main
     }
+
 }

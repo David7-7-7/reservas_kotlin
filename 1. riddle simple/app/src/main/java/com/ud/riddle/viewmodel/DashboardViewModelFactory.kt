@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.ud.riddle.RepositorioCRUD
 
-class DashboardViewModelFactory( // Permite pasar el repositorioCRUD al view model porque el viewmodel no se pudede modificar diractemente
+class DashboardViewModelFactory(
     private val repositorioCRUD: RepositorioCRUD
 ) : ViewModelProvider.Factory {
 

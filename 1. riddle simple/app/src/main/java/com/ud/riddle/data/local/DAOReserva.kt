@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface DAOReserva {
-    @Query("SELECT * FROM reservas ORDER BY fecha ASC") // Usamos la tabla reservas
+    @Query("SELECT * FROM reservas ORDER BY fecha ASC")
     fun getAll(): Flow<List<Reserva>>
 
     @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
@@ -22,12 +22,12 @@ interface DAOReserva {
     @Query("""
     SELECT * FROM reservas 
     WHERE cancha = :cancha 
-    AND fecha = :fecha 
-    AND hora = :hora 
+    AND fecha = :fecha
     AND estado = 'Active'
     LIMIT 1
     """)
-    suspend fun existeReserva(cancha: String, fecha: String, hora: String): Reserva?
+    suspend fun existeReserva(cancha: String, fecha: String): Reserva?
+
 
     //Busqueda por cliente
     @Query("SELECT * FROM reservas WHERE cliente LIKE '%' || :nombre || '%'")

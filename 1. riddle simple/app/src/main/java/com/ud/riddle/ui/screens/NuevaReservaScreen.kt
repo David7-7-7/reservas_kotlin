@@ -14,8 +14,8 @@ import androidx.compose.ui.unit.dp
 import com.ud.riddle.estados.EstadoCreacionReserva
 import com.ud.riddle.viewmodel.ModeloCreaReserva
 import com.ud.riddle.viewmodel.DashboardViewModel
-import androidx.compose.material3.OutlinedTextField
 
+@OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NuevaReservaScreen(
@@ -25,14 +25,17 @@ fun NuevaReservaScreen(
 
     val uiState by viewModel.uiState.collectAsState()
 
+    var expanded by remember { mutableStateOf(false) }
+    val canchas = (1..10).toList()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
-        , horizontalAlignment = Alignment.CenterHorizontally
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        Spacer(modifier = Modifier.height(33.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
         Text(
             text = "Nueva Reserva",
@@ -43,68 +46,103 @@ fun NuevaReservaScreen(
 
         OutlinedTextField(
             value = viewModel.nombre,
-            onValueChange = {viewModel.nombre = it},
-            label = { Text("Nombre del Cliente") }
+            onValueChange = { viewModel.nombre = it },
+            label = { Text("Nombre del Cliente") },
+            modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(10.dp))
 
         OutlinedTextField(
-            value = viewModel.telefono.toString(),
-            onValueChange = {
-                viewModel.telefono = it.toIntOrNull() ?: 0
+            value = viewModel.telefono,
+            onValueChange = { viewModel.telefono = it },
+            label = { Text("Teléfono") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        OutlinedTextField(
+            value = viewModel.fecha,
+            onValueChange = { viewModel.fecha = it },
+            label = { Text("Fecha") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        OutlinedTextField(
+            value = viewModel.hora,
+            onValueChange = { input ->
+                if (input.length <= 5) {
+                    viewModel.hora = input
+                }
             },
-            label = { Text("Teléfono") }
+            label = { Text("Hora (HH:mm)") },
+            modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        OutlinedTextField( value = viewModel.fecha,
-            onValueChange = {viewModel.fecha = it},
-            label = { Text("Fecha") }
-        )
+        ExposedDropdownMenuBox(
+            expanded = expanded,
+            onExpandedChange = { expanded = !expanded }
+        ) {
 
-        Spacer(modifier = Modifier.height(10.dp))
+            OutlinedTextField(
+                value = "Cancha ${viewModel.cancha}",
+                onValueChange = {},
+                readOnly = true,
+                label = { Text("Número de Cancha") },
+                trailingIcon = {
+                    ExposedDropdownMenuDefaults.TrailingIcon(expanded)
+                },
+                modifier = Modifier
+                    .menuAnchor()
+                    .fillMaxWidth()
+            )
 
-        OutlinedTextField( value = viewModel.hora,
-            onValueChange = {viewModel.hora = it},
-            label = { Text("Hora") }
-        )
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        OutlinedTextField(
-            value = viewModel.cancha,
-            onValueChange = {viewModel.cancha = it},
-            label = { Text("Cancha") }
-        )
+            ExposedDropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false }
+            ) {
+                canchas.forEach { numero ->
+                    DropdownMenuItem(
+                        text = { Text("Cancha $numero") },
+                        onClick = {
+                            viewModel.cancha = numero.toString()
+                            expanded = false
+                        }
+                    )
+                }
+            }
+        }
 
         Spacer(modifier = Modifier.height(10.dp))
 
         OutlinedTextField(
             value = viewModel.cantJugadores,
-            onValueChange = {viewModel.cantJugadores = it},
-            label = { Text("Cantidad de Jugadores") }
+            onValueChange = { viewModel.cantJugadores = it },
+            label = { Text("Cantidad de Jugadores") },
+            modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(10.dp))
 
         OutlinedTextField(
             value = viewModel.estado,
-            onValueChange = {viewModel.estado = it},
-            label = { Text("Estado") }
+            onValueChange = { viewModel.estado = it },
+            label = { Text("Estado (Activa / Cancelada / Finalizada)") },
+            modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        when (uiState) {
-            is EstadoCreacionReserva.Error -> {
-                Text(
-                    text = (uiState as EstadoCreacionReserva.Error).message,
-                    color = Color.Red
-                )
-            }
-            else -> {}
+        if (uiState is EstadoCreacionReserva.Error) {
+            Text(
+                text = (uiState as EstadoCreacionReserva.Error).message,
+                color = Color.Red
+            )
         }
 
         Spacer(modifier = Modifier.height(10.dp))
@@ -115,8 +153,9 @@ fun NuevaReservaScreen(
         ) {
 
             Button(onClick = {
+                //viewModel.limpiarCampos()
                 viewModel.creaReserva()
-              //  viewModel.limpiarCampos()
+                dashViewModel.irADashboard()
             }) {
                 Text("Guardar")
             }
@@ -126,14 +165,6 @@ fun NuevaReservaScreen(
                 colors = ButtonDefaults.buttonColors(containerColor = Color.Gray)
             ) {
                 Text("Cancelar")
-            }
-
-            Button(
-                onClick = { dashViewModel.irADashboard() },
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Gray),
-                modifier = Modifier.padding(start = 16.dp)
-            ) {
-                Text("Volver")
             }
         }
     }

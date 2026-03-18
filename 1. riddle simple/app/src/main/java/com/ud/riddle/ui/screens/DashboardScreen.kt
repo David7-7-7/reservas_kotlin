@@ -1,6 +1,11 @@
 package com.ud.riddle.ui.screens
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.magnifier
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -13,7 +18,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ud.riddle.viewmodel.DashboardViewModel
 import com.ud.riddle.data.local.Reserva
 import com.ud.riddle.Screen
+import com.ud.riddle.viewmodel.ReservaViewModel
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DashboardScreen(viewModel: DashboardViewModel) {
 
@@ -36,15 +43,19 @@ fun DashboardScreen(viewModel: DashboardViewModel) {
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        //  PRIMERA FILA
+
         Row(modifier = Modifier.fillMaxWidth()) {
+
+            val hoy = java.time.LocalDate.now().toString()
+            val reservasHoy = reservas.filter { it.fecha == hoy }
 
             DashboardCard(
                 "Reservas Hoy",
-                "${reservas.size}",
+                "${reservasHoy.size}",
                 Color(0xFF4CAF50),
                 Modifier.weight(1f)
             )
+
 
             DashboardCard(
                 "Canchas Ocupadas",
@@ -54,12 +65,11 @@ fun DashboardScreen(viewModel: DashboardViewModel) {
             )
         }
 
-        // SEGUNDA FILA
         Row(modifier = Modifier.fillMaxWidth()) {
 
             DashboardCard(
                 "Reservas Activas",
-                "${reservas.count { it.estado == "Active" }}",
+                "${reservas.count { it.estado == "Activa" }}",
                 Color(0xFF66BB6A),
                 Modifier.weight(1f)
             )
@@ -81,21 +91,22 @@ fun DashboardScreen(viewModel: DashboardViewModel) {
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        //  LISTA
         Card(
             modifier = Modifier.fillMaxWidth()
         ) {
             Column(modifier = Modifier.padding(8.dp)) {
-
-                reservas.take(3).forEach { reserva ->
-                    ReservaItem(reserva)
+                if (reservas.isEmpty()) {
+                    Text("No hay reservas")
+                } else {
+                    reservas.take(3).forEach { reserva ->
+                        ReservaItem(reserva)
+                    }
                 }
             }
         }
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        //  BOTONES
         Button(
             onClick = { viewModel.irA(Screen.NewReservation) },
             modifier = Modifier
@@ -151,16 +162,28 @@ fun DashboardCard(
 }
 
 @Composable
-fun ReservaItem(reserva: Reserva) { // Lista para mostrar al inicio
+fun ReservaItem(reserva: Reserva) {
 
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 6.dp),
+            .padding(8.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(text = reserva.cliente)
-        Text(text = "${reserva.hora}")
-        Text(text = "Cancha ${reserva.cancha}")
+
+        Text(
+            text = reserva.cliente.ifEmpty { "Sin nombre" },
+            modifier = Modifier.weight(1f)
+        )
+
+        Text(
+            text = reserva.hora.take(5),
+            modifier = Modifier.weight(1f)
+        )
+
+        Text(
+            text = "C${reserva.cancha}",
+            modifier = Modifier.weight(1f)
+        )
     }
 }
