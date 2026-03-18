@@ -3,6 +3,7 @@ package com.ud.riddle.viewmodel
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
@@ -23,7 +24,7 @@ class ModeloCreaReserva (private val repositorioCRUD: RepositorioCRUD) : ViewMod
     private val _uiState = MutableStateFlow<EstadoCreacionReserva>(EstadoCreacionReserva.Idle)
     val uiState: StateFlow<EstadoCreacionReserva> = _uiState.asStateFlow()
     var nombre by mutableStateOf("")
-    var telefono by mutableStateOf("")
+    var telefono by mutableIntStateOf(0)
     var fecha by mutableStateOf(LocalDate.now().toString())
     var hora by mutableStateOf(LocalTime.now().toString())
     var cancha by mutableStateOf("1")
@@ -35,12 +36,10 @@ class ModeloCreaReserva (private val repositorioCRUD: RepositorioCRUD) : ViewMod
 
             val existente = repositorioCRUD.existeReserva(cancha, fecha, hora)
 
-
             if (existente != null) {
                 _uiState.value = EstadoCreacionReserva.Error("Ya existe una reserva para esa cancha, fecha y hora")
                 return@launch
             }
-
             repositorioCRUD.saveReserva(
                 Reserva(
                     cliente = nombre,
@@ -52,22 +51,17 @@ class ModeloCreaReserva (private val repositorioCRUD: RepositorioCRUD) : ViewMod
                     estado = estado
                 )
             )
-
             _uiState.value = EstadoCreacionReserva.Success
         }
     }
 
     fun limpiarCampos() {
         nombre = ""
-        telefono = ""
+        telefono = 0
         fecha = ""
         hora = ""
         cancha = ""
         cantJugadores = ""
         estado = ""
     }
-
-
-
-
 }

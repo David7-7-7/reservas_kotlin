@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface DAOReserva {
-    @Query("SELECT * FROM reservas ORDER BY fecha ASC")
+    @Query("SELECT * FROM reservas ORDER BY fecha ASC") // Usamos la tabla reservas
     fun getAll(): Flow<List<Reserva>>
 
     @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)

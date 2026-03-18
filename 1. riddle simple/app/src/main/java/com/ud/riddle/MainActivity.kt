@@ -32,7 +32,8 @@ class MainActivity : ComponentActivity() {
             applicationContext,
             AppDatabase::class.java,
             "riddle-db"
-        ).build()
+        ).fallbackToDestructiveMigration() .build()
+
 
         // Crear repositorio
         val repositorioCRUD = RepositorioCRUD(db.reservaDao())

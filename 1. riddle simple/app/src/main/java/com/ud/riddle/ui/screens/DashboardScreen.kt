@@ -1,9 +1,6 @@
 package com.ud.riddle.ui.screens
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.magnifier
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -16,7 +13,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ud.riddle.viewmodel.DashboardViewModel
 import com.ud.riddle.data.local.Reserva
 import com.ud.riddle.Screen
-import com.ud.riddle.viewmodel.ReservaViewModel
 
 @Composable
 fun DashboardScreen(viewModel: DashboardViewModel) {
@@ -85,7 +81,7 @@ fun DashboardScreen(viewModel: DashboardViewModel) {
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        //  LISTA BONITA COMO EN LA IMAGEN
+        //  LISTA
         Card(
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -155,7 +151,7 @@ fun DashboardCard(
 }
 
 @Composable
-fun ReservaItem(reserva: Reserva) {
+fun ReservaItem(reserva: Reserva) { // Lista para mostrar al inicio
 
     Row(
         modifier = Modifier
@@ -163,11 +159,8 @@ fun ReservaItem(reserva: Reserva) {
             .padding(vertical = 6.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-
         Text(text = reserva.cliente)
-
         Text(text = "${reserva.hora}")
-
         Text(text = "Cancha ${reserva.cancha}")
     }
 }

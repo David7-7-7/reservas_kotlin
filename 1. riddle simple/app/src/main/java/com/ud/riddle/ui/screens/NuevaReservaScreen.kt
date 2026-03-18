@@ -1,7 +1,5 @@
 package com.ud.riddle.ui.screens
 
-import android.app.DatePickerDialog
-import android.app.TimePickerDialog
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
@@ -52,8 +50,10 @@ fun NuevaReservaScreen(
         Spacer(modifier = Modifier.height(10.dp))
 
         OutlinedTextField(
-            value = viewModel.telefono,
-            onValueChange = {viewModel.telefono = it},
+            value = viewModel.telefono.toString(),
+            onValueChange = {
+                viewModel.telefono = it.toIntOrNull() ?: 0
+            },
             label = { Text("Teléfono") }
         )
 
@@ -61,14 +61,14 @@ fun NuevaReservaScreen(
 
         OutlinedTextField( value = viewModel.fecha,
             onValueChange = {viewModel.fecha = it},
-            label = { Text("Número de Cancha") }
+            label = { Text("Fecha") }
         )
 
         Spacer(modifier = Modifier.height(10.dp))
 
         OutlinedTextField( value = viewModel.hora,
             onValueChange = {viewModel.hora = it},
-            label = { Text("Número de Cancha") }
+            label = { Text("Hora") }
         )
 
         Spacer(modifier = Modifier.height(10.dp))
@@ -76,7 +76,7 @@ fun NuevaReservaScreen(
         OutlinedTextField(
             value = viewModel.cancha,
             onValueChange = {viewModel.cancha = it},
-            label = { Text("Número de Cancha") }
+            label = { Text("Cancha") }
         )
 
         Spacer(modifier = Modifier.height(10.dp))
@@ -116,7 +116,7 @@ fun NuevaReservaScreen(
 
             Button(onClick = {
                 viewModel.creaReserva()
-                viewModel.limpiarCampos()
+              //  viewModel.limpiarCampos()
             }) {
                 Text("Guardar")
             }
